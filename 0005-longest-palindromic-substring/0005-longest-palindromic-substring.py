@@ -1,13 +1,30 @@
 class Solution:
-    def longestPalindrome(self, s: str) -> str:
-        n = len(s)
-        f = [[True] * n for _ in range(n)]
-        k, mx = 0, 1
-        for i in range(n - 2, -1, -1):
-            for j in range(i + 1, n):
-                f[i][j] = False
-                if s[i] == s[j]:
-                    f[i][j] = f[i + 1][j - 1]
-                    if f[i][j] and mx < j - i + 1:
-                        k, mx = i, j - i + 1
-        return s[k : k + mx]
+  def longestPalindrome(self, s: str) -> str:
+    if not s:
+      return ''
+
+    # (start, end) indices of the longest palindrome in s
+    indices = [0, 0]
+
+    def extend(s: str, i: int, j: int) -> tuple[int, int]:
+      """
+      Returns the (start, end) indices of the longest palindrome extended from
+      the substring s[i..j].
+      """
+      while i >= 0 and j < len(s):
+        if s[i] != s[j]:
+          break
+        i -= 1
+        j += 1
+      return i + 1, j - 1
+
+    for i in range(len(s)):
+      l1, r1 = extend(s, i, i)
+      if r1 - l1 > indices[1] - indices[0]:
+        indices = l1, r1
+      if i + 1 < len(s) and s[i] == s[i + 1]:
+        l2, r2 = extend(s, i, i + 1)
+        if r2 - l2 > indices[1] - indices[0]:
+          indices = l2, r2
+
+    return s[indices[0]:indices[1] + 1]
