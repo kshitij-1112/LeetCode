@@ -1,19 +1,25 @@
 class Solution:
     def intToRoman(self, num: int) -> str:
-        values = [
-            (1000, "M"), (900, "CM"),
-            (500, "D"),  (400, "CD"),
-            (100, "C"),  (90, "XC"),
-            (50, "L"),   (40, "XL"),
-            (10, "X"),   (9, "IX"),
-            (5, "V"),    (4, "IV"),
+        values = (
+            (1000, "M"),
+            (900, "CM"),
+            (500, "D"),
+            (400, "CD"),
+            (100, "C"),
+            (90, "XC"),
+            (50, "L"),
+            (40, "XL"),
+            (10, "X"),
+            (9, "IX"),
+            (5, "V"),
+            (4, "IV"),
             (1, "I")
-        ]
+        )
 
-        ans = []
+        result = []
 
         for value, symbol in values:
             count, num = divmod(num, value)
-            ans.append(symbol * count)
+            result.append(symbol * count)
 
-        return "".join(ans)
+        return "".join(result)
