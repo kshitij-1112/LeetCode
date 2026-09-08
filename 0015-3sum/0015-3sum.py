@@ -1,32 +1,37 @@
 class Solution:
-  def threeSum(self, nums: list[int]) -> list[list[int]]:
-    if len(nums) < 3:
-      return []
+    def threeSum(self, nums: list[int]) -> list[list[int]]:
+        nums.sort()
+        res = []
 
-    ans = []
+        for i in range(len(nums) - 2):
+            # Skip duplicate first values
+            if i > 0 and nums[i] == nums[i - 1]:
+                continue
 
-    nums.sort()
+            # No solution possible from here
+            if nums[i] > 0:
+                break
 
-    for i in range(len(nums) - 2):
-      if i > 0 and nums[i] == nums[i - 1]:
-        continue
-      # Choose nums[i] as the first number in the triplet, then search the
-      # remaining numbers in [i + 1, n - 1].
-      l = i + 1
-      r = len(nums) - 1
-      while l < r:
-        summ = nums[i] + nums[l] + nums[r]
-        if summ == 0:
-          ans.append((nums[i], nums[l], nums[r]))
-          l += 1
-          r -= 1
-          while nums[l] == nums[l - 1] and l < r:
-            l += 1
-          while nums[r] == nums[r + 1] and l < r:
-            r -= 1
-        elif summ < 0:
-          l += 1
-        else:
-          r -= 1
+            left, right = i + 1, len(nums) - 1
 
-    return ans
+            while left < right:
+                total = nums[i] + nums[left] + nums[right]
+
+                if total < 0:
+                    left += 1
+                elif total > 0:
+                    right -= 1
+                else:
+                    res.append([nums[i], nums[left], nums[right]])
+
+                    left += 1
+                    right -= 1
+
+                    # Skip duplicate second/third values
+                    while left < right and nums[left] == nums[left - 1]:
+                        left += 1
+
+                    while left < right and nums[right] == nums[right + 1]:
+                        right -= 1
+
+        return res
