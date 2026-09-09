@@ -1,21 +1,19 @@
 class Solution:
-  def letterCombinations(self, digits: str) -> list[str]:
-    if not digits:
-      return []
+    def letterCombinations(self, digits: str) -> list[str]:
+        if not digits:
+            return []
 
-    digitToLetters = ['', '', 'abc', 'def', 'ghi',
-                      'jkl', 'mno', 'pqrs', 'tuv', 'wxyz']
-    ans = []
+        phone = (
+            "", "", "abc", "def",
+            "ghi", "jkl", "mno",
+            "pqrs", "tuv", "wxyz"
+        )
 
-    def dfs(i: int, path: list[str]) -> None:
-      if i == len(digits):
-        ans.append(''.join(path))
-        return
+        result = [""]
 
-      for letter in digitToLetters[int(digits[i])]:
-        path.append(letter)
-        dfs(i + 1, path)
-        path.pop()
+        for d in digits:
+            letters = phone[ord(d) - 48]
+            result = [prefix + c for prefix in result for c in letters]
 
-    dfs(0, [])
-    return ans
+        return result
+
