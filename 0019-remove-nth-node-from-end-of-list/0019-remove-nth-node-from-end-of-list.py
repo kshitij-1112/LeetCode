@@ -6,20 +6,18 @@
 class Solution:
     def removeNthFromEnd(self, head, n):
         dummy = ListNode(0, head)
+        slow = fast = dummy
 
-        slow = dummy
-        fast = dummy
-
-        # Move fast n+1 steps ahead
-        for _ in range(n + 1):
+        # Create a gap of n nodes
+        for _ in range(n):
             fast = fast.next
 
-        # Move both until fast reaches the end
-        while fast:
+        # Move until fast is at the last node
+        while fast.next:
             slow = slow.next
             fast = fast.next
 
-        # Remove the nth node from the end
+        # Remove the target node
         slow.next = slow.next.next
 
         return dummy.next
