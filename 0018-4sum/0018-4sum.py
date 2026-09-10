@@ -2,14 +2,30 @@ class Solution:
     def fourSum(self, nums, target):
         nums.sort()
         n = len(nums)
-        ans = []
+        res = []
 
         for i in range(n - 3):
+            # Skip duplicate first elements
             if i > 0 and nums[i] == nums[i - 1]:
                 continue
 
+            # Pruning
+            if nums[i] + nums[i + 1] + nums[i + 2] + nums[i + 3] > target:
+                break
+
+            if nums[i] + nums[n - 3] + nums[n - 2] + nums[n - 1] < target:
+                continue
+
             for j in range(i + 1, n - 2):
+                # Skip duplicate second elements
                 if j > i + 1 and nums[j] == nums[j - 1]:
+                    continue
+
+                # Pruning
+                if nums[i] + nums[j] + nums[j + 1] + nums[j + 2] > target:
+                    break
+
+                if nums[i] + nums[j] + nums[n - 2] + nums[n - 1] < target:
                     continue
 
                 left, right = j + 1, n - 1
@@ -18,11 +34,14 @@ class Solution:
                     total = nums[i] + nums[j] + nums[left] + nums[right]
 
                     if total == target:
-                        ans.append([nums[i], nums[j], nums[left], nums[right]])
+                        res.append([
+                            nums[i], nums[j], nums[left], nums[right]
+                        ])
 
                         left += 1
                         right -= 1
 
+                        # Skip duplicates
                         while left < right and nums[left] == nums[left - 1]:
                             left += 1
 
@@ -34,4 +53,4 @@ class Solution:
                     else:
                         right -= 1
 
-        return ans
+        return res
