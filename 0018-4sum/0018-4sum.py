@@ -1,33 +1,56 @@
 class Solution:
-  def fourSum(self, nums: list[int], target: int):
-    ans = []
+    def fourSum(self, nums, target):
+        nums.sort()
+        n = len(nums)
+        res = []
 
-    def nSum(
-            l: int, r: int, target: int, n: int, path: list[int],
-            ans: list[list[int]]) -> None:
-      """Finds n numbers that add up to the target in [l, r]."""
-      if r - l + 1 < n or n < 2 or target < nums[l] * n or target > nums[r] * n:
-        return
-      if n == 2:
-        while l < r:
-          summ = nums[l] + nums[r]
-          if summ == target:
-            ans.append(path + [nums[l], nums[r]])
-            l += 1
-            while nums[l] == nums[l - 1] and l < r:
-              l += 1
-          elif summ < target:
-            l += 1
-          else:
-            r -= 1
-        return
+        for i in range(n - 3):
+            # Skip duplicate first elements
+            if i > 0 and nums[i] == nums[i - 1]:
+                continue
 
-      for i in range(l, r + 1):
-        if i > l and nums[i] == nums[i - 1]:
-          continue
+            # Pruning
+            if nums[i] + nums[i + 1] + nums[i + 2] + nums[i + 3] > target:
+                break
 
-        nSum(i + 1, r, target - nums[i], n - 1, path + [nums[i]], ans)
+            if nums[i] + nums[n - 3] + nums[n - 2] + nums[n - 1] < target:
+                continue
 
-    nums.sort()
-    nSum(0, len(nums) - 1, target, 4, [], ans)
-    return ans
+            for j in range(i + 1, n - 2):
+                # Skip duplicate second elements
+                if j > i + 1 and nums[j] == nums[j - 1]:
+                    continue
+
+                # Pruning
+                if nums[i] + nums[j] + nums[j + 1] + nums[j + 2] > target:
+                    break
+
+                if nums[i] + nums[j] + nums[n - 2] + nums[n - 1] < target:
+                    continue
+
+                left, right = j + 1, n - 1
+
+                while left < right:
+                    total = nums[i] + nums[j] + nums[left] + nums[right]
+
+                    if total == target:
+                        res.append([
+                            nums[i], nums[j], nums[left], nums[right]
+                        ])
+
+                        left += 1
+                        right -= 1
+
+                        # Skip duplicates
+                        while left < right and nums[left] == nums[left - 1]:
+                            left += 1
+
+                        while left < right and nums[right] == nums[right + 1]:
+                            right -= 1
+
+                    elif total < target:
+                        left += 1
+                    else:
+                        right -= 1
+
+        return res
