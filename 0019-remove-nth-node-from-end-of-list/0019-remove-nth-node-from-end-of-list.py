@@ -4,18 +4,22 @@
 #         self.val = val
 #         self.next = next
 class Solution:
-  def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
-    slow = head
-    fast = head
+    def removeNthFromEnd(self, head, n):
+        dummy = ListNode(0, head)
 
-    for _ in range(n):
-      fast = fast.next
-    if not fast:
-      return head.next
+        slow = dummy
+        fast = dummy
 
-    while fast.next:
-      slow = slow.next
-      fast = fast.next
-    slow.next = slow.next.next
+        # Move fast n+1 steps ahead
+        for _ in range(n + 1):
+            fast = fast.next
 
-    return head
+        # Move both until fast reaches the end
+        while fast:
+            slow = slow.next
+            fast = fast.next
+
+        # Remove the nth node from the end
+        slow.next = slow.next.next
+
+        return dummy.next
