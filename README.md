@@ -70,5 +70,5 @@ A collection of LeetCode questions to ace the coding interview! - Created using 
 ## Recursion
 |  |
 | ------- |
-| [0021-merge-two-sorted-lists](https://github.com/kshitij-1112/LeetCode/tree/master/0021-merge-two-sorted-lists) |
+| [0021-merge-two-sorted-lists](https://github.com/kshitij-1112/LeetCode/tree/master/0021-merge-two-sorted-lists) | 
 <!---LeetCode Topics End-->
