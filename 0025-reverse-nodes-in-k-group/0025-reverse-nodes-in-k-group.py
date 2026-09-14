@@ -4,36 +4,33 @@
 #         self.val = val
 #         self.next = next
 class Solution:
-    def reverseKGroup(
-        self, head: Optional[ListNode], k: int
-    ) -> Optional[ListNode]:
+  def reverseKGroup(self, head: ListNode | None, k: int) -> ListNode | None:
+    if not head:
+      return None
 
-        dummy = ListNode(0, head)
-        group_prev = dummy
+    tail = head
 
-        while True:
-            # Find the kth node
-            kth = group_prev
-            for _ in range(k):
-                kth = kth.next
-                if not kth:
-                    return dummy.next
+    for _ in range(k):
+      # There are less than k nodes in the list, do nothing.
+      if not tail:
+        return head
+      tail = tail.next
 
-            group_next = kth.next
+    newHead = self._reverse(head, tail)
+    head.next = self.reverseKGroup(tail, k)
+    return newHead
 
-            # Reverse this group
-            prev = group_next
-            curr = group_prev.next
-
-            while curr != group_next:
-                nxt = curr.next
-                curr.next = prev
-                prev = curr
-                curr = nxt
-
-            # Connect previous part to reversed group
-            old_first = group_prev.next
-            group_prev.next = kth
-
-            # old first is now the tail of the reversed group
-            group_prev = old_first
+  def _reverse(
+      self,
+      head: ListNode | None,
+      tail: ListNode | None,
+  ) -> ListNode | None:
+    """Reverses [head, tail)."""
+    prev = None
+    curr = head
+    while curr != tail:
+      next = curr.next
+      curr.next = prev
+      prev = curr
+      curr = next
+    return prev
