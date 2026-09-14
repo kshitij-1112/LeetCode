@@ -4,20 +4,25 @@
 #         self.val = val
 #         self.next = next
 class Solution:
-    def swapPairs(self, head: Optional[ListNode]) -> Optional[ListNode]:
-        dummy = ListNode(0, head)
-        prev = dummy
+  def swapPairs(self, head: ListNode) -> ListNode:
+    def getLength(head: ListNode) -> int:
+      length = 0
+      while head:
+        length += 1
+        head = head.next
+      return length
 
-        while prev.next and prev.next.next:
-            first = prev.next
-            second = first.next
+    length = getLength(head)
+    dummy = ListNode(0, head)
+    prev = dummy
+    curr = head
 
-            # Swap the two nodes
-            first.next = second.next
-            second.next = first
-            prev.next = second
+    for _ in range(length // 2):
+      next = curr.next
+      curr.next = next.next
+      next.next = prev.next
+      prev.next = next
+      prev = curr
+      curr = curr.next
 
-            # Move to the next pair
-            prev = first
-
-        return dummy.next
+    return dummy.next
