@@ -1,26 +1,26 @@
 class Solution:
+
   def nextPermutation(self, nums: list[int]) -> None:
+    """Do not return anything, modify nums in-place instead."""
     n = len(nums)
 
-    # From back to front, find the first number < nums[i + 1].
+    # Step 1: Find the first element from the right that is smaller than the one after it (pivot)
     i = n - 2
-    while i >= 0:
-      if nums[i] < nums[i + 1]:
-        break
+    while i >= 0 and nums[i] >= nums[i + 1]:
       i -= 1
 
-    # From back to front, find the first number > nums[i], swap it with nums[i].
+    # Step 2: If such a pivot is found
     if i >= 0:
-      for j in range(n - 1, i, -1):
-        if nums[j] > nums[i]:
-          nums[i], nums[j] = nums[j], nums[i]
-          break
+      # Find the smallest element to the right of 'i' that is greater than nums[i]
+      j = n - 1
+      while nums[j] <= nums[i]:
+        j -= 1
+      # Swap them
+      nums[i], nums[j] = nums[j], nums[i]
 
-    def reverse(nums: list[int], l: int, r: int) -> None:
-      while l < r:
-        nums[l], nums[r] = nums[r], nums[l]
-        l += 1
-        r -= 1
-
-    # Reverse nums[i + 1..n - 1].
-    reverse(nums, i + 1, len(nums) - 1)
+    # Step 3: Reverse the suffix starting from i + 1 to get the smallest lexicographical order
+    left, right = i + 1, n - 1
+    while left < right:
+      nums[left], nums[right] = nums[right], nums[left]
+      left += 1
+      right -= 1
