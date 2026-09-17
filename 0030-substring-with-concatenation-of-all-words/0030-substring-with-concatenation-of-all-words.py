@@ -1,6 +1,3 @@
-from collections import Counter
-
-
 class Solution:
 
   def findSubstring(self, s: str, words: list[str]) -> list[int]:
@@ -9,42 +6,46 @@ class Solution:
 
     word_len = len(words[0])
     num_words = len(words)
-    window_len = word_len * num_words
+    total_len = word_len * num_words
     s_len = len(s)
 
-    if s_len < window_len:
+    if s_len < total_len:
       return []
 
-    word_count = Counter(words)
-    result = []
+    # Build frequency map using a primitive dictionary
+    word_count = {}
+    for w in words:
+      word_count[w] = word_count.get(w, 0) + 1
 
-    # Slide window across each possible word offset alignment
+    result = []
+    
+    # Iterate through each word-length offset
     for i in range(word_len):
       left = i
-      current_count = Counter()
-      valid_count = 0
+      right = i
+      current_count = {}
+      valid_words = 0
 
-      for right in range(i, s_len - word_len + 1, word_len):
+      while right + word_len <= s_len:
         word = s[right : right + word_len]
+        right += word_len
 
         if word in word_count:
-          current_count[word] += 1
-          valid_count += 1
+          current_count[word] = current_count.get(word, 0) + 1
+          valid_words += 1
 
-          # Shrink window from the left if a word count exceeds target frequency
+          # Shrink window if count exceeds target frequency
           while current_count[word] > word_count[word]:
             left_word = s[left : left + word_len]
             current_count[left_word] -= 1
-            valid_count -= 1
+            valid_words -= 1
             left += word_len
 
-          # Record the starting index when all target words match the window
-          if valid_count == num_words:
+          if valid_words == num_words:
             result.append(left)
         else:
-          # Reset the window immediately upon encountering an invalid word
           current_count.clear()
-          valid_count = 0
-          left = right + word_len
+          valid_words = 0
+          left = right
 
     return result
