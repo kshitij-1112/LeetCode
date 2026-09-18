@@ -1,12 +1,34 @@
 class Solution:
-  def longestValidParentheses(self, s: str) -> int:
-    s2 = ')' + s
-    # dp[i] := the length of the longest valid parentheses in the substring
-    # s2[1..i]
-    dp = [0] * len(s2)
-
-    for i in range(1, len(s2)):
-      if s2[i] == ')' and s2[i - dp[i - 1] - 1] == '(':
-        dp[i] = dp[i - 1] + dp[i - dp[i - 1] - 2] + 2
-
-    return max(dp)
+    def longestValidParentheses(self, s: str) -> int:
+        max_len = 0
+        left = right = 0
+        
+        # 1. Left to Right Pass
+        for char in s:
+            if char == '(':
+                left += 1
+            else:
+                right += 1
+                
+            if left == right:
+                max_len = max(max_len, 2 * right)
+            elif right > left:
+                # Invalid sequence, reset counts
+                left = right = 0
+                
+        left = right = 0
+        
+        # 2. Right to Left Pass (catches cases like "(()")
+        for char in reversed(s):
+            if char == '(':
+                left += 1
+            else:
+                right += 1
+                
+            if left == right:
+                max_len = max(max_len, 2 * left)
+            elif left > right:
+                # Invalid sequence, reset counts
+                left = right = 0
+                
+        return max_len
