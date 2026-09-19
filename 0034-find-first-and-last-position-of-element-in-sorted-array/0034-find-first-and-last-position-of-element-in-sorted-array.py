@@ -1,24 +1,17 @@
+from bisect import bisect_left, bisect_right
 from typing import List
 
 class Solution:
     def searchRange(self, nums: List[int], target: int) -> List[int]:
-        def find_bound(is_first: bool) -> int:
-            low, high = 0, len(nums) - 1
-            bound = -1
-            
-            while low <= high:
-                mid = (low + high) // 2
-                if nums[mid] == target:
-                    bound = mid
-                    if is_first:
-                        high = mid - 1  # Look further left for the first occurrence
-                    else:
-                        low = mid + 1   # Look further right for the last occurrence
-                elif nums[mid] < target:
-                    low = mid + 1
-                else:
-                    high = mid - 1
-                    
-            return bound
-
-        return [find_bound(True), find_bound(False)]
+        # Find the starting index using bisect_left
+        left = bisect_left(nums, target)
+        
+        # Check if the target actually exists in the array
+        if left == len(nums) or nums[left] != target:
+            return [-1, -1]
+        
+        # Find the ending index using bisect_right (minus 1 because bisect_right 
+        # gives the insertion point after the rightmost target)
+        right = bisect_right(nums, target) - 1
+        
+        return [left, right]
