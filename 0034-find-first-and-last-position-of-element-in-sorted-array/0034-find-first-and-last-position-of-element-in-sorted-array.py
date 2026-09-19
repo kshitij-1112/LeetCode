@@ -1,7 +1,24 @@
+from typing import List
+
 class Solution:
-  def searchRange(self, nums: list[int], target: int) -> list[int]:
-    l = bisect_left(nums, target)
-    if l == len(nums) or nums[l] != target:
-      return -1, -1
-    r = bisect_right(nums, target) - 1
-    return l, r
+    def searchRange(self, nums: List[int], target: int) -> List[int]:
+        def find_bound(is_first: bool) -> int:
+            low, high = 0, len(nums) - 1
+            bound = -1
+            
+            while low <= high:
+                mid = (low + high) // 2
+                if nums[mid] == target:
+                    bound = mid
+                    if is_first:
+                        high = mid - 1  # Look further left for the first occurrence
+                    else:
+                        low = mid + 1   # Look further right for the last occurrence
+                elif nums[mid] < target:
+                    low = mid + 1
+                else:
+                    high = mid - 1
+                    
+            return bound
+
+        return [find_bound(True), find_bound(False)]
