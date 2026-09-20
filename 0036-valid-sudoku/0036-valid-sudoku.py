@@ -1,7 +1,9 @@
 class Solution:
 
   def isValidSudoku(self, board: list[list[str]]) -> bool:
-    seen = set()
+    rows = [0] * 9
+    cols = [0] * 9
+    boxes = [0] * 9
 
     for r in range(9):
       for c in range(9):
@@ -9,17 +11,17 @@ class Solution:
         if val == ".":
           continue
 
-        # Create unique string identifiers for row, column, and 3x3 sub-box
-        row_id = f"row {r}: {val}"
-        col_id = f"col {c}: {val}"
-        box_id = f"box {r // 3},{c // 3}: {val}"
+        # Convert '1'-'9' to a bit position (0 to 8)
+        bit = 1 << (ord(val) - 49)  # ord('1') is 49
+        box_idx = (r // 3) * 3 + (c // 3)
 
-        # If any identifier already exists, the board is invalid
-        if row_id in seen or col_id in seen or box_id in seen:
+        # Check if the bit is already set (duplicate found)
+        if (rows[r] & bit) or (cols[c] & bit) or (boxes[box_idx] & bit):
           return False
 
-        seen.add(row_id)
-        seen.add(col_id)
-        seen.add(box_id)
+        # Set the bit
+        rows[r] |= bit
+        cols[c] |= bit
+        boxes[box_idx] |= bit
 
     return True
