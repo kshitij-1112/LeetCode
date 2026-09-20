@@ -1,7 +1,10 @@
 class Solution:
 
   def isValidSudoku(self, board: list[list[str]]) -> bool:
-    seen = set()
+    # Pre-allocate 9x9 tracking matrices for rows, columns, and 3x3 boxes
+    rows = [[False] * 9 for _ in range(9)]
+    cols = [[False] * 9 for _ in range(9)]
+    boxes = [[False] * 9 for _ in range(9)]
 
     for r in range(9):
       for c in range(9):
@@ -9,17 +12,17 @@ class Solution:
         if val == ".":
           continue
 
-        # Create unique string identifiers for row, column, and 3x3 sub-box
-        row_id = f"row {r}: {val}"
-        col_id = f"col {c}: {val}"
-        box_id = f"box {r // 3},{c // 3}: {val}"
+        # Convert character '1'-'9' to index 0-8
+        num = int(val) - 1
+        box_idx = (r // 3) * 3 + (c // 3)
 
-        # If any identifier already exists, the board is invalid
-        if row_id in seen or col_id in seen or box_id in seen:
+        # If already marked true, a duplicate exists
+        if rows[r][num] or cols[c][num] or boxes[box_idx][num]:
           return False
 
-        seen.add(row_id)
-        seen.add(col_id)
-        seen.add(box_id)
+        # Mark as seen
+        rows[r][num] = True
+        cols[c][num] = True
+        boxes[box_idx][num] = True
 
     return True
