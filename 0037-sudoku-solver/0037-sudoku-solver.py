@@ -4,50 +4,70 @@ class Solution:
     rows = [0] * 9
     cols = [0] * 9
     boxes = [0] * 9
-    empty_cells = []
 
-    # 1. Initialize tracking bitmasks and find all empty cells
+    # 1. Initialize bitmasks for existing numbers
     for r in range(9):
       for c in range(9):
         val = board[r][c]
-        if val == ".":
-          empty_cells.append((r, c))
-        else:
-          bit = 1 << (ord(val) - 49)
-          box_idx = (r // 3) * 3 + (c // 3)
+        if val != ".":
+          bit = 1 << (int(val) - 1)
           rows[r] |= bit
           cols[c] |= bit
-          boxes[box_idx] |= bit
+          boxes[(r // 3) * 3 + (c // 3)] |= bit
 
-    # 2. Backtracking DFS with index tracking
-    def backtrack(idx: int) -> bool:
-      if idx == len(empty_cells):
-        return True  # All empty cells filled successfully
+    def dfs() -> bool:
+      min_choices = 10
+      best_r, best_c = -1, -1
+      best_candidates = 0
 
-      r, c = empty_cells[idx]
-      box_idx = (r // 3) * 3 + (c // 3)
+      # MRV Heuristic: Find the empty cell with the fewest available choices
+      for r in range(9):
+        for c in range(9):
+          if board[r][c] == ".":
+            box_idx = (r // 3) * 3 + (c // 3)
+            # Available digits represented by bits (1 to 9 -> bits 0 to 8)
+            avail = ~(rows[r] | cols[c] | boxes[box_idx]) & 0x1FF
+            choices = avail.bit_count()  # Native C-optimized bit counter
 
-      # Try digits 1 through 9 represented by bits 0 to 8
-      for i in range(9):
-        bit = 1 << i
-        # Check if digit is already used in row, col, or box
-        if not (rows[r] & bit) and not (cols[c] & bit) and not (boxes[box_idx] & bit):
-          # Place the digit
-          rows[r] |= bit
-          cols[c] |= bit
-          boxes[box_idx] |= bit
-          board[r][c] = chr(49 + i)
+            if choices == 0:
+              return False  # Dead end found
+            if choices < min_choices:
+              min_choices = choices
+              best_r, best_c = r, c
+              best_candidates = avail
+              if min_choices == 1:
+                break  # Can't get fewer than 1 choice, optimal greediness
+        if min_choices == 1:
+          break
 
-          # Recurse to the next empty cell
-          if backtrack(idx + 1):
-            return True
+      # If no empty cells are left, the board is successfully solved
+      if best_r == -1:
+        return True
 
-          # Backtrack (undo changes)
-          rows[r] &= ~bit
-          cols[c] &= ~bit
-          boxes[box_idx] &= ~bit
-          board[r][c] = "."
+      box_idx = (best_r // 3) * 3 + (best_c // 3)
+      candidates = best_candidates
+
+      # Try each available digit using bit manipulation
+      while candidates:
+        bit = candidates & -candidates  # Extract lowest set bit
+        candidates ^= bit
+        num = bit.bit_length() - 1  # Convert bit to digit index (0-8)
+
+        # Place the number
+        rows[best_r] |= bit
+        cols[best_c] |= bit
+        boxes[box_idx] |= bit
+        board[best_r][best_c] = chr(49 + num)
+
+        if dfs():
+          return True
+
+        # Backtrack (undo changes)
+        rows[best_r] &= ~bit
+        cols[best_c] &= ~bit
+        boxes[box_idx] &= ~bit
+        board[best_r][best_c] = "."
 
       return False
 
-    backtrack(0)
+    dfs()
