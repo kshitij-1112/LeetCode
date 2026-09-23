@@ -1,14 +1,20 @@
 class Solution:
-  def trap(self, height: list[int]) -> int:
-    n = len(height)
-    l = [0] * n  # l[i] := max(height[0..i])
-    r = [0] * n  # r[i] := max(height[i..n))
-
-    for i, h in enumerate(height):
-      l[i] = h if i == 0 else max(h, l[i - 1])
-
-    for i, h in reversed(list(enumerate(height))):
-      r[i] = h if i == n - 1 else max(h, r[i + 1])
-
-    return sum(min(l[i], r[i]) - h
-               for i, h in enumerate(height))
+    def trap(self, height: List[int]) -> int:
+        if not height:
+            return 0
+            
+        left, right = 0, len(height) - 1
+        left_max, right_max = height[left], height[right]
+        water_trapped = 0
+        
+        while left < right:
+            if height[left] < height[right]:
+                left_max = max(left_max, height[left])
+                water_trapped += left_max - height[left]
+                left += 1
+            else:
+                right_max = max(right_max, height[right])
+                water_trapped += right_max - height[right]
+                right -= 1
+                
+        return water_trapped
