@@ -1,29 +1,26 @@
 class Solution:
     def isMatch(self, s: str, p: str) -> bool:
-        s_idx, p_idx = 0, 0
-        star_idx = -1
-        match_idx = 0
+        m, n = len(s), len(p)
         
-        while s_idx < len(s):
-            # If current characters match or pattern has '?'
-            if p_idx < len(p) and (p[p_idx] == s[s_idx] or p[p_idx] == '?'):
-                s_idx += 1
-                p_idx += 1
-            # If pattern has '*', mark its position and current string index
-            elif p_idx < len(p) and p[p_idx] == '*':
-                star_idx = p_idx
-                match_idx = s_idx
-                p_idx += 1
-            # If there is a mismatch, but we encountered a '*' previously, backtrack
-            elif star_idx != -1:
-                p_idx = star_idx + 1
-                match_idx += 1
-                s_idx = match_idx
+        # prev[j] tracks whether s[0...i-1] matches p[0...j-1]
+        prev = [False] * (n + 1)
+        prev[0] = True
+        
+        # Handle leading '*' matching empty string
+        for j in range(1, n + 1):
+            if p[j - 1] == '*':
+                prev[j] = prev[j - 1]
             else:
-                return False
+                break
                 
-        # Check if remaining characters in pattern are all '*'
-        while p_idx < len(p) and p[p_idx] == '*':
-            p_idx += 1
+        for i in range(1, m + 1):
+            curr = [False] * (n + 1)
+            for j in range(1, n + 1):
+                if p[j - 1] == '*':
+                    # '*' matches empty sequence (curr[j-1]) or one character (prev[j])
+                    curr[j] = curr[j - 1] or prev[j]
+                elif p[j - 1] == '?' or p[j - 1] == s[i - 1]:
+                    curr[j] = prev[j - 1]
+            prev = curr
             
-        return p_idx == len(p)
+        return prev[n]
