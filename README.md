@@ -192,5 +192,5 @@ A collection of LeetCode questions to ace the coding interview! - Created using 
 ## Simulation
 |  |
 | ------- |
-| [0043-multiply-strings](https://github.com/kshitij-1112/LeetCode/tree/master/0043-multiply-strings) |
+| [0043-multiply-strings](https://github.com/kshitij-1112/LeetCode/tree/master/0043-multiply-strings) | 
 <!---LeetCode Topics End-->
