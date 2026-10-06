@@ -3,17 +3,23 @@ class Solution:
   def minPathSum(self, grid: list[list[int]]) -> int:
     m, n = len(grid), len(grid[0])
 
-    # Initialize the first row (can only be reached from the left)
+    # Pre-optimize the first row
+    row0 = grid[0]
     for j in range(1, n):
-      grid[0][j] += grid[0][j - 1]
+      row0[j] += row0[j - 1]
 
-    # Initialize the first column (can only be reached from above)
+    # Traverse remaining rows with cached row references
     for i in range(1, m):
-      grid[i][0] += grid[i - 1][0]
+      prev_row = grid[i - 1]
+      curr_row = grid[i]
 
-    # Fill in the rest of the grid using the DP recurrence relation
-    for i in range(1, m):
+      # Handle first column of the current row
+      curr_row[0] += prev_row[0]
+
+      # Inner loop optimized with local variable caching
       for j in range(1, n):
-        grid[i][j] += min(grid[i - 1][j], grid[i][j - 1])
+        curr_row[j] += (
+            prev_row[j] if prev_row[j] < curr_row[j - 1] else curr_row[j - 1]
+        )
 
     return grid[-1][-1]
