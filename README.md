@@ -82,6 +82,7 @@ A collection of LeetCode questions to ace the coding interview! - Created using 
 | [0066-plus-one](https://github.com/kshitij-1112/LeetCode/tree/master/0066-plus-one) |
 | [0067-add-binary](https://github.com/kshitij-1112/LeetCode/tree/master/0067-add-binary) |
 | [0069-sqrtx](https://github.com/kshitij-1112/LeetCode/tree/master/0069-sqrtx) |
+| [0070-climbing-stairs](https://github.com/kshitij-1112/LeetCode/tree/master/0070-climbing-stairs) |
 ## String
 |  |
 | ------- |
@@ -169,6 +170,7 @@ A collection of LeetCode questions to ace the coding interview! - Created using 
 | [0062-unique-paths](https://github.com/kshitij-1112/LeetCode/tree/master/0062-unique-paths) |
 | [0063-unique-paths-ii](https://github.com/kshitij-1112/LeetCode/tree/master/0063-unique-paths-ii) |
 | [0064-minimum-path-sum](https://github.com/kshitij-1112/LeetCode/tree/master/0064-minimum-path-sum) |
+| [0070-climbing-stairs](https://github.com/kshitij-1112/LeetCode/tree/master/0070-climbing-stairs) |
 ## Divide and Conquer
 |  |
 | ------- |
@@ -262,4 +264,8 @@ A collection of LeetCode questions to ace the coding interview! - Created using 
 |  |
 | ------- |
 | [0069-sqrtx](https://github.com/kshitij-1112/LeetCode/tree/master/0069-sqrtx) |
+## Memoization
+|  |
+| ------- |
+| [0070-climbing-stairs](https://github.com/kshitij-1112/LeetCode/tree/master/0070-climbing-stairs) |
 <!---LeetCode Topics End-->
