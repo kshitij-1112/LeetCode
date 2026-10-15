@@ -7,13 +7,10 @@
 class Solution:
     def deleteDuplicates(self, head: Optional[ListNode]) -> Optional[ListNode]:
         curr = head
-        
-        while curr and curr.next:
-            if curr.val == curr.next.val:
-                # Skip the duplicate node by pointing to the next-next node
-                curr.next = curr.next.next
+        # Cache curr.next using the walrus operator to eliminate redundant attribute lookups
+        while curr and (nxt := curr.next):
+            if curr.val == nxt.val:
+                curr.next = nxt.next
             else:
-                # Move forward only if there is no duplicate
-                curr = curr.next
-                
+                curr = nxt
         return head
