@@ -1,23 +1,29 @@
 class Solution:
 
   def largestRectangleArea(self, heights: list[int]) -> int:
+    # 1. Append a sentinel 0 to flush out remaining elements automatically,
+    # eliminating bounds-checking conditionals inside the loop.
+    heights.append(0)
+
     stack = []
-    max_area = 0
-    n = len(heights)
+    ans = 0
 
-    # Loop up to n + 1 to handle a virtual height of 0 at the end,
-    # which flushes out all remaining bars in the stack.
-    for i in range(n + 1):
-      h = heights[i] if i < n else 0
+    # Local binding to avoid dictionary/attribute lookup overhead in the loop
+    append_stack = stack.append
+    pop_stack = stack.pop
 
+    for i, h in enumerate(heights):
       while stack and heights[stack[-1]] > h:
-        height = heights[stack.pop()]
-        # If stack is empty, the width spans from index 0 to i
+        height = heights[pop_stack()]
         width = i if not stack else i - stack[-1] - 1
+
+        # Direct inline comparison is faster than calling max() repeatedly
         current_area = height * width
-        if current_area > max_area:
-          max_area = current_area
+        if current_area > ans:
+          ans = current_area
 
-      stack.append(i)
+      append_stack(i)
 
-    return max_area
+    # Clean up the mutated list to leave input pristine
+    heights.pop()
+    return ans
