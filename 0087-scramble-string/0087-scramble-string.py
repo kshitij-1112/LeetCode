@@ -1,4 +1,6 @@
 
+from functools import lru_cache
+
 class Solution:
     def isScramble(self, s1: str, s2: str) -> bool:
         n = len(s1)
@@ -6,8 +8,8 @@ class Solution:
         if s1 == s2:
             return True
 
-        # Encode character frequencies in 5-bit fields.
-        # Each character occurs at most 30 times.
+        # Pack character counts into 5-bit fields.
+        # n <= 30, so each character count fits in 5 bits.
         bits = [1 << (5 * i) for i in range(26)]
 
         p1 = [0] * (n + 1)
@@ -17,43 +19,32 @@ class Solution:
             p1[i + 1] = p1[i] + bits[ord(s1[i]) - 97]
             p2[i + 1] = p2[i] + bits[ord(s2[i]) - 97]
 
-        # dp[length][i][j]:
-        # s1[i:i+length] is a scramble of s2[j:j+length]
-        dp = [[[False] * n for _ in range(n)]
-              for _ in range(n + 1)]
+        @lru_cache(None)
+        def dfs(i: int, j: int, length: int) -> bool:
+            if s1[i:i + length] == s2[j:j + length]:
+                return True
 
-        # Base case: substrings of length 1
-        for i in range(n):
-            for j in range(n):
-                dp[1][i][j] = s1[i] == s2[j]
+            sig1 = p1[i + length] - p1[i]
+            sig2 = p2[j + length] - p2[j]
 
-        for length in range(2, n + 1):
-            limit = n - length + 1
+            if sig1 != sig2:
+                return False
 
-            for i in range(limit):
-                sig1 = p1[i + length] - p1[i]
+            for k in range(1, length):
+                left = p1[i + k] - p1[i]
 
-                for j in range(limit):
-                    # O(1) character-frequency check
-                    if sig1 != p2[j + length] - p2[j]:
-                        continue
+                # No swap: left part matches left part
+                if left == p2[j + k] - p2[j]:
+                    if (dfs(i, j, k) and
+                        dfs(i + k, j + k, length - k)):
+                        return True
 
-                    # Identical substrings need no splitting
-                    if s1[i:i + length] == s2[j:j + length]:
-                        dp[length][i][j] = True
-                        continue
+                # Swap: left part matches right part
+                if left == p2[j + length] - p2[j + length - k]:
+                    if (dfs(i, j + length - k, k) and
+                        dfs(i + k, j, length - k)):
+                        return True
 
-                    for k in range(1, length):
-                        # No swap
-                        if (dp[k][i][j] and
-                            dp[length - k][i + k][j + k]):
-                            dp[length][i][j] = True
-                            break
+            return False
 
-                        # Swap
-                        if (dp[k][i][j + length - k] and
-                            dp[length - k][i + k][j]):
-                            dp[length][i][j] = True
-                            break
-
-        return dp[n][0][0]
+        return dfs(0, 0, n)
