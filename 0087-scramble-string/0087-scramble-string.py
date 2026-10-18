@@ -1,32 +1,25 @@
-from collections import Counter
-import functools
+from functools import cache
 
 class Solution:
     def isScramble(self, s1: str, s2: str) -> bool:
-        @functools.cache
-        def dfs(i1: int, i2: int, length: int) -> bool:
-            # Base Case: Single character comparison
-            if length == 1:
-                return s1[i1] == s2[i2]
+        @cache
+        def dfs(i: int, j: int, k: int) -> bool:
+            # Base case: length 1 comparison
+            if k == 1:
+                return s1[i] == s2[j]
             
-            sub1 = s1[i1:i1 + length]
-            sub2 = s2[i2:i2 + length]
-            
-            # Direct match check
-            if sub1 == sub2:
+            # Fast-path: if the substrings are already identical, they match
+            if s1[i:i + k] == s2[j:j + k]:
                 return True
                 
-            # Fast Anagram Pruning (avoids expanding dead paths)
-            if Counter(sub1) != Counter(sub2):
-                return False
-                
-            # Try all possible split positions
-            for k in range(1, length):
-                # Case 1: Non-swapped 
-                if dfs(i1, i2, k) and dfs(i1 + k, i2 + k, length - k):
+            # Try all possible split positions 'h'
+            for h in range(1, k):
+                # Case 1: Non-swapped (left-left, right-right)
+                if dfs(i, j, h) and dfs(i + h, j + h, k - h):
                     return True
-                # Case 2: Swapped
-                if dfs(i1, i2 + length - k, k) and dfs(i1 + k, i2, length - k):
+                
+                # Case 2: Swapped (left-right, right-left)
+                if dfs(i, j + k - h, h) and dfs(i + h, j, k - h):
                     return True
                     
             return False
