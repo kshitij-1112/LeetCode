@@ -1,23 +1,39 @@
-from functools import cache
+
+from functools import lru_cache
+from collections import Counter
 
 class Solution:
-    @cache
     def isScramble(self, s1: str, s2: str) -> bool:
+        n = len(s1)
+
         if s1 == s2:
             return True
-            
-        # Blazing-fast anagram check using Python's C-optimized Timsort
-        if sorted(s1) != sorted(s2):
+
+        if Counter(s1) != Counter(s2):
             return False
-            
-        n = len(s1)
-        for i in range(1, n):
-            # Case 1: Non-swapped check
-            if self.isScramble(s1[:i], s2[:i]) and self.isScramble(s1[i:], s2[i:]):
+
+        @lru_cache(None)
+        def dfs(i: int, j: int, length: int) -> bool:
+            a = s1[i:i + length]
+            b = s2[j:j + length]
+
+            if a == b:
                 return True
-                
-            # Case 2: Swapped check
-            if self.isScramble(s1[:i], s2[n - i:]) and self.isScramble(s1[i:], s2[: n - i]):
-                return True
-                
-        return False
+
+            if Counter(a) != Counter(b):
+                return False
+
+            for k in range(1, length):
+                # No swap
+                if (dfs(i, j, k) and
+                    dfs(i + k, j + k, length - k)):
+                    return True
+
+                # Swap
+                if (dfs(i, j + length - k, k) and
+                    dfs(i + k, j, length - k)):
+                    return True
+
+            return False
+
+        return dfs(0, 0, n)
