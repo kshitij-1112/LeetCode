@@ -1,5 +1,4 @@
 from functools import cache
-from collections import Counter
 
 class Solution:
     @cache
@@ -7,17 +6,17 @@ class Solution:
         if s1 == s2:
             return True
             
-        # Mandatory pruning: if character pools don't match, cut the branch instantly
-        if Counter(s1) != Counter(s2):
+        # Blazing-fast anagram check using Python's C-optimized Timsort
+        if sorted(s1) != sorted(s2):
             return False
             
         n = len(s1)
         for i in range(1, n):
-            # Case 1: Non-swapped split
+            # Case 1: Non-swapped check
             if self.isScramble(s1[:i], s2[:i]) and self.isScramble(s1[i:], s2[i:]):
                 return True
                 
-            # Case 2: Swapped split
+            # Case 2: Swapped check
             if self.isScramble(s1[:i], s2[n - i:]) and self.isScramble(s1[i:], s2[: n - i]):
                 return True
                 
