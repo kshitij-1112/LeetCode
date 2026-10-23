@@ -1,52 +1,41 @@
-# Definition for a binary tree node.
-# class TreeNode:
-#     def __init__(self, val=0, left=None, right=None):
-#         self.val = val
-#         self.left = left
-#         self.right = right
 
 class Solution:
     def recoverTree(self, root: Optional[TreeNode]) -> None:
-        """
-        Do not return anything, modify root in-place instead.
-        """
         first = second = prev = None
         curr = root
-        
+
         while curr:
-            if not curr.left:
-                # Check for violation
+            if curr.left is None:
+                # Visit current node
                 if prev and prev.val > curr.val:
-                    if not first:
+                    if first is None:
                         first = prev
-                        second = curr
-                    else:
-                        second = curr
+                    second = curr
+
                 prev = curr
                 curr = curr.right
+
             else:
-                # Find the inorder predecessor of curr
+                # Find inorder predecessor
                 pred = curr.left
-                while pred.right and pred.right != curr:
+                while pred.right and pred.right is not curr:
                     pred = pred.right
-                
-                if not pred.right:
-                    # Thread predecessor to curr
+
+                if pred.right is None:
+                    # Create temporary thread
                     pred.right = curr
                     curr = curr.left
                 else:
-                    # Cut the thread and process curr
+                    # Remove temporary thread and visit current
                     pred.right = None
+
                     if prev and prev.val > curr.val:
-                        if not first:
+                        if first is None:
                             first = prev
-                            second = curr
-                        else:
-                            second = curr
+                        second = curr
+
                     prev = curr
                     curr = curr.right
-                    
-        # Swap the values of the two misplaced nodes to recover the BST
-        if first and second:
-            first.val, second.val = second.val, first.val
-        
+
+        # Swap the two misplaced values
+        first.val, second.val = second.val, first.val
