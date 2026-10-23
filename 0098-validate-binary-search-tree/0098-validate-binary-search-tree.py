@@ -1,26 +1,31 @@
-# Definition for a binary tree node.
-# class TreeNode:
-#     def __init__(self, val=0, left=None, right=None):
-#         self.val = val
-#         self.left = left
-#         self.right = right
-
 class Solution:
     def isValidBST(self, root: Optional[TreeNode]) -> bool:
-        def validate(node, low, high):
-            # Base case: an empty node is a valid BST
-            if not node:
-                return True
-            
-            v = node.val
-            
-            # Check current node against the allowed boundaries
-            if low is not None and v <= low:
-                return False
-            if high is not None and v >= high:
-                return False
-            
-            # Recursively validate left and right subtrees with updated bounds
-            return validate(node.left, low, v) and validate(node.right, v, high)
+        prev_val = None
+        curr = root
         
-        return validate(root, None, None)
+        while curr:
+            if not curr.left:
+                # Process current node
+                if prev_val is not None and curr.val <= prev_val:
+                    return False
+                prev_val = curr.val
+                curr = curr.right
+            else:
+                # Find the inorder predecessor of curr
+                pred = curr.left
+                while pred.right and pred.right != curr:
+                    pred = pred.right
+                
+                if not pred.right:
+                    # Make curr the right child of its predecessor
+                    pred.right = curr
+                    curr = curr.left
+                else:
+                    # Revert the changes made to restore the original tree structure
+                    pred.right = None
+                    if prev_val is not None and curr.val <= prev_val:
+                        return False
+                    prev_val = curr.val
+                    curr = curr.right
+                    
+        return True
