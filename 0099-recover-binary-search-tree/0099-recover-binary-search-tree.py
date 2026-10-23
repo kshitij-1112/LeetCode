@@ -10,42 +10,27 @@ class Solution:
         """
         Do not return anything, modify root in-place instead.
         """
-        first = second = prev = None
-        curr = root
+        # state container: [first, second, prev]
+        state = [None, None, None]
         
-        while curr:
-            if not curr.left:
-                # Check for violation
-                if prev and prev.val > curr.val:
-                    if not first:
-                        first = prev
-                        second = curr
-                    else:
-                        second = curr
-                prev = curr
-                curr = curr.right
-            else:
-                # Find the inorder predecessor of curr
-                pred = curr.left
-                while pred.right and pred.right != curr:
-                    pred = pred.right
-                
-                if not pred.right:
-                    # Thread predecessor to curr
-                    pred.right = curr
-                    curr = curr.left
+        def inorder(node):
+            if not node:
+                return
+            
+            inorder(node.left)
+            
+            prev = state[2]
+            if prev and prev.val > node.val:
+                if not state[0]:
+                    state[0] = prev
+                    state[1] = node
                 else:
-                    # Cut the thread and process curr
-                    pred.right = None
-                    if prev and prev.val > curr.val:
-                        if not first:
-                            first = prev
-                            second = curr
-                        else:
-                            second = curr
-                    prev = curr
-                    curr = curr.right
-                    
-        # Swap the values of the two misplaced nodes to recover the BST
-        if first and second:
-            first.val, second.val = second.val, first.val
+                    state[1] = node
+            state[2] = node
+            
+            inorder(node.right)
+            
+        inorder(root)
+        
+        if state[0] and state[1]:
+            state[0].val, state[1].val = state[1].val, state[0].val
