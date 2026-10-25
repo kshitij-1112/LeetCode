@@ -1,14 +1,21 @@
-# Definition for a binary tree node.
-# class TreeNode:
-#     def __init__(self, val=0, left=None, right=None):
-#         self.val = val
-#         self.left = left
-#         self.right = right
+from collections import deque
 
 class Solution:
     def isSameTree(self, p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
-        # If both nodes exist, check value and recursively check children
-        if p and q:
-            return p.val == q.val and self.isSameTree(p.left, q.left) and self.isSameTree(p.right, q.right)
-        # If one or both are None, they match only if both are None (p is q)
-        return p is q
+        queue = deque([(p, q)])
+        
+        while queue:
+            node1, node2 = queue.popleft()
+            
+            # If both are None, continue to next pair
+            if not node1 and not node2:
+                continue
+            # If one is None or values don't match, they aren't the same
+            if not node1 or not node2 or node1.val != node2.val:
+                return False
+            
+            # Append left and right children pairs
+            queue.append((node1.left, node2.left))
+            queue.append((node1.right, node2.right))
+            
+        return True
