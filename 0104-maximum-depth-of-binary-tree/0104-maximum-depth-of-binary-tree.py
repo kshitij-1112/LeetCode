@@ -1,19 +1,8 @@
 
 class Solution:
     def maxDepth(self, root):
-        if not root:
+        if root is None:
             return 0
-
-        stack = [(root, 1)]
-        depth = 0
-
-        while stack:
-            node, level = stack.pop()
-            depth = max(depth, level)
-
-            if node.left:
-                stack.append((node.left, level + 1))
-            if node.right:
-                stack.append((node.right, level + 1))
-
-        return depth
+        left = self.maxDepth(root.left)
+        right = self.maxDepth(root.right)
+        return 1 + (left if left > right else right)
