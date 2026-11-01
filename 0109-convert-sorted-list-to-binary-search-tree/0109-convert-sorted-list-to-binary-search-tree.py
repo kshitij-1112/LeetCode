@@ -13,38 +13,26 @@
 
 class Solution:
     def sortedListToBST(self, head: Optional[ListNode]) -> Optional[TreeNode]:
-        # Step 1: Count the total number of nodes in the linked list
-        def get_length(node: Optional[ListNode]) -> int:
-            length = 0
-            curr = node
-            while curr:
-                length += 1
-                curr = curr.next
-            return length
-        
-        total_size = get_length(head)
-        self.head = head
-        
-        # Step 2: Recursively build the BST bottom-up using in-order traversal
+        # Phase 1: Convert the linked list into a Python array for O(1) index access
+        nums = []
+        curr = head
+        while curr:
+            nums.append(curr.val)
+            curr = curr.next
+            
+        # Phase 2: Recursively build the BST using index boundaries
         def build_tree(left: int, right: int) -> Optional[TreeNode]:
             if left > right:
                 return None
             
             mid = (left + right) >> 1
             
-            # Recursively build the left subtree
-            left_child = build_tree(left, mid - 1)
-            
-            # Construct the root node using the current linked list head
-            root = TreeNode(self.head.val)
-            root.left = left_child
-            
-            # Advance the linked list pointer
-            self.head = self.head.next
-            
-            # Recursively build the right subtree
-            root.right = build_tree(mid + 1, right)
-            
+            # Instantiate the root and construct subtrees concurrently using slicing indices
+            root = TreeNode(
+                nums[mid], 
+                build_tree(left, mid - 1), 
+                build_tree(mid + 1, right)
+            )
             return root
             
-        return build_tree(0, total_size - 1)
+        return build_tree(0, len(nums) - 1)
