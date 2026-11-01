@@ -7,20 +7,29 @@
 
 class Solution:
     def sortedArrayToBST(self, nums: List[int]) -> Optional[TreeNode]:
-        def build_tree(left: int, right: int) -> Optional[TreeNode]:
-            if left > right:
-                return None
+        if not nums:
+            return None
+        
+        # Create a root placeholder
+        root = TreeNode(0)
+        # Stack stores tuples of: (current_node, left_index, right_index)
+        stack = [(root, 0, len(nums) - 1)]
+        
+        while stack:
+            node, left, right = stack.pop()
             
-            # Find the middle index (equivalent to (left + right) // 2)
+            # Find the middle index using bitwise shift for optimal speed
             mid = (left + right) >> 1
+            node.val = nums[mid]
             
-            # Create the root node with the middle element
-            root = TreeNode(nums[mid])
-            
-            # Recursively construct left and right subtrees
-            root.left = build_tree(left, mid - 1)
-            root.right = build_tree(mid + 1, right)
-            
-            return root
-            
-        return build_tree(0, len(nums) - 1)
+            # Handle left subtree
+            if left <= mid - 1:
+                node.left = TreeNode(0)
+                stack.append((node.left, left, mid - 1))
+                
+            # Handle right subtree
+            if mid + 1 <= right:
+                node.right = TreeNode(0)
+                stack.append((node.right, mid + 1, right))
+                
+        return root
