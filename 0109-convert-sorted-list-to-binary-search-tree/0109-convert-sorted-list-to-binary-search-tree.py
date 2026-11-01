@@ -1,38 +1,33 @@
-# Definition for singly-linked list.
-# class ListNode:
-#     def __init__(self, val=0, next=None):
-#         self.val = val
-#         self.next = next
-
-# Definition for a binary tree node.
-# class TreeNode:
-#     def __init__(self, val=0, left=None, right=None):
-#         self.val = val
-#         self.left = left
-#         self.right = right
 
 class Solution:
-    def sortedListToBST(self, head: Optional[ListNode]) -> Optional[TreeNode]:
-        # Phase 1: Convert the linked list into a Python array for O(1) index access
-        nums = []
+    def sortedListToBST(self, head):
+        # Find the length of the linked list
+        n = 0
         curr = head
         while curr:
-            nums.append(curr.val)
+            n += 1
             curr = curr.next
-            
-        # Phase 2: Recursively build the BST using index boundaries
-        def build_tree(left: int, right: int) -> Optional[TreeNode]:
-            if left > right:
+
+        # Pointer to traverse the linked list
+        self.curr = head
+
+        def build(size):
+            if size <= 0:
                 return None
-            
-            mid = (left + right) >> 1
-            
-            # Instantiate the root and construct subtrees concurrently using slicing indices
-            root = TreeNode(
-                nums[mid], 
-                build_tree(left, mid - 1), 
-                build_tree(mid + 1, right)
-            )
+
+            # Build left subtree
+            left = build(size // 2)
+
+            # Current list node becomes the root
+            root = TreeNode(self.curr.val)
+            root.left = left
+
+            # Move linked list pointer forward
+            self.curr = self.curr.next
+
+            # Build right subtree
+            root.right = build(size - size // 2 - 1)
+
             return root
-            
-        return build_tree(0, len(nums) - 1)
+
+        return build(n)
