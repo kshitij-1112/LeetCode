@@ -7,26 +7,26 @@
 
 class Solution:
     def pathSum(self, root: Optional[TreeNode], targetSum: int) -> List[List[int]]:
-        result = []
+        res = []
+        if not root:
+            return res
         
-        def dfs(node, current_sum, path):
-            if not node:
-                return
-            
-            # Choose: add current node to path
+        def dfs(node, target, path):
             path.append(node.val)
-            current_sum += node.val
             
-            # If it's a leaf node and matches the target sum, save a copy of the path
-            if not node.left and not node.right and current_sum == targetSum:
-                result.append(list(path)) # O(K) copy where K is path length
+            # If it's a leaf node, check condition
+            if not node.left and not node.right:
+                if target == node.val:
+                    res.append(path[:]) # O(K) slice copy
             else:
-                # Explore children
-                dfs(node.left, current_sum, path)
-                dfs(node.right, current_sum, path)
+                # Guard checks avoid pushing None frames onto the call stack
+                if node.left:
+                    dfs(node.left, target - node.val, path)
+                if node.right:
+                    dfs(node.right, target - node.val, path)
             
-            # Unchoose (Backtrack): remove current node before returning to parent
+            # Backtrack
             path.pop()
             
-        dfs(root, 0, [])
-        return result
+        dfs(root, targetSum, [])
+        return res
